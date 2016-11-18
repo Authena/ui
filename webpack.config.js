@@ -6,7 +6,7 @@ const production = process.env.NODE_ENV === 'production'
 const config = {
   entry: {
     vendor: ['vue', 'vue-router'],
-    app: './demo/index.js',
+    app: ['./demo/index.js'],
   },
   output: {
     filename: "[name].js",
@@ -59,6 +59,7 @@ const config = {
       },
     }),
     new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.NoErrorsPlugin(),
   ],
   postcss() {
     return [require('autoprefixer'), require('precss')]
@@ -70,6 +71,11 @@ const config = {
     },
   },
   devServer: {
+    stats: {
+      colors: true,
+    },
+    hot: true,
+    publicPath: '/assets/',
     contentBase: path.resolve('./demo'),
     historyApiFallback: true,
   },
