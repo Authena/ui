@@ -61,6 +61,7 @@ const config = {
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.NoErrorsPlugin(),
   ],
+  debug: !production,
   postcss() {
     return [require('autoprefixer'), require('precss')]
   },
@@ -79,6 +80,10 @@ const config = {
     contentBase: path.resolve('./demo'),
     historyApiFallback: true,
   },
+}
+
+if (!production) {
+  config.devtool = '#source-map'
 }
 
 module.exports = config
