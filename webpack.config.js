@@ -1,7 +1,8 @@
 const webpack = require('webpack')
 const path = require('path')
-
 const production = process.env.NODE_ENV === 'production'
+
+const publicPath = '/ui/assets/'
 
 const config = {
   entry: {
@@ -12,7 +13,7 @@ const config = {
     filename: "[name].js",
     chunkFilename: "[id].chunk.js",
     path: path.resolve('./assets'),
-    publicPath: '/assets/',
+    publicPath,
   },
   module: {
     preLoaders: [
@@ -76,7 +77,7 @@ const config = {
       colors: true,
     },
     hot: true,
-    publicPath: '/assets/',
+    publicPath,
     contentBase: path.resolve('./demo'),
     historyApiFallback: true,
   },

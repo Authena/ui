@@ -8,6 +8,6 @@ const routes = [
   { path: '/paper', component: Paper },
 ]
 
-const router = new VueRouter({ mode: 'history', routes })
+const router = new VueRouter({ mode: 'hash', routes })
 
 export default router
