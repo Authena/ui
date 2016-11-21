@@ -7,6 +7,7 @@ const path = require('path')
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const open = require("open")
 
 const webpackConfig = require('./webpack.config.js')
 
@@ -46,7 +47,9 @@ gulp.task('webpack-dev-server', function(callback) {
 
   new WebpackDevServer(compiler, webpackConfig.devServer).listen(3000, "localhost", function(err) {
     if(err) throw new gutil.PluginError('webpack-dev-server', err)
-    gutil.log('[webpack-dev-server]', 'http://localhost:3000/index.html')
+    const url = `http://localhost:3000${webpackConfig.devServer.publicPath}`
+    gutil.log('[webpack-dev-server]', url)
+    open(url)
     callback()
   })
 })

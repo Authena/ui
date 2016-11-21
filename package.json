@@ -45,6 +45,7 @@
     "gulp-sourcemaps": "^2.2.0",
     "gulp-util": "^3.0.7",
     "html-webpack-plugin": "^2.24.1",
+    "open": "^0.0.5",
     "postcss-loader": "^1.1.1",
     "precss": "^1.4.0",
     "style-loader": "^0.13.1",
