@@ -1,7 +1,7 @@
 const gulp = require('gulp')
 const gutil = require("gulp-util")
 const babel = require("gulp-babel")
-const rimraf = require("rimraf")
+const del = require("del")
 const sourcemaps = require('gulp-sourcemaps')
 const path = require('path')
 const webpack = require('webpack')
@@ -10,13 +10,18 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const webpackConfig = require('./webpack.config.js')
 
-gulp.task("webpack", function(callback) {
+gulp.task('clean:assets', function (cb) {
+  del.sync('./assets/**')
+  cb()
+})
+
+gulp.task("webpack:build", function(callback) {
   webpackConfig.plugins.push(
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.UglifyJsPlugin(),
     new HtmlWebpackPlugin({
-      chunks: [],
-      template: path.resolve('./demo/index.html'),
+      chunks: ['vendor', 'app'],
+      template: path.resolve('./demo/templates/index.html'),
       filename: path.resolve('./assets/index.html')
     })
   )
@@ -46,11 +51,12 @@ gulp.task('webpack-dev-server', function(callback) {
   })
 })
 
-gulp.task('clean-lib', function (cb) {
-  rimraf(path.resolve('./lib'), cb)
+gulp.task('clean:lib', function (cb) {
+  del.sync('./lib/**')
+  cb()
 })
 
-gulp.task('compile-css', function () {
+gulp.task('compile:css', function () {
   const postcss = require('gulp-postcss')
   return gulp.src('src/**/*.css')
     .pipe(sourcemaps.init())
@@ -58,11 +64,13 @@ gulp.task('compile-css', function () {
     .pipe(gulp.dest('lib/'))
 })
 
-gulp.task('compile-js', function () {
+gulp.task('compile:js', function () {
   return gulp.src("src/**/*.js")
     .pipe(sourcemaps.init())
     .pipe(babel())
     .pipe(gulp.dest("lib/"))
 })
-gulp.task("compile", ["clean-lib", "compile-css", "compile-js"])
+
+gulp.task("compile", ["clean:lib", "compile:css", "compile:js"])
+gulp.task('webpack', ['clean:assets', 'webpack:build'])
 gulp.task("default", ["webpack-dev-server"])
