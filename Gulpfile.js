@@ -2,17 +2,23 @@ const gulp = require('gulp')
 const gutil = require("gulp-util")
 const babel = require("gulp-babel")
 const rimraf = require("rimraf")
-const sourcemaps = require('gulp-sourcemaps');
+const sourcemaps = require('gulp-sourcemaps')
+const path = require('path')
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
-const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const webpackConfig = require('./webpack.config.js')
 
 gulp.task("webpack", function(callback) {
   webpackConfig.plugins.push(
     new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin()
+    new webpack.optimize.UglifyJsPlugin(),
+    new HtmlWebpackPlugin({
+      chunks: [],
+      template: path.resolve('./demo/index.html'),
+      filename: path.resolve('./assets/index.html')
+    })
   )
   webpack(webpackConfig, function(err, stats) {
     if(err) throw new gutil.PluginError('webpack', err)
@@ -24,7 +30,9 @@ gulp.task("webpack", function(callback) {
 })
 
 gulp.task('webpack-dev-server', function(callback) {
-  webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin())
+  webpackConfig.plugins.push(
+    new webpack.HotModuleReplacementPlugin()
+  )
   webpackConfig.entry.app.push(
     'webpack-dev-server/client?http://localhost:3000',
     'webpack/hot/only-dev-server'
