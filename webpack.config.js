@@ -11,7 +11,7 @@ const config = {
     filename: "[name].js",
     chunkFilename: "[id].chunk.js",
     path: path.resolve('./assets'),
-    publicPath: '/assets/',
+    publicPath: '/ui/assets/',
   },
   module: {
     preLoaders: [
