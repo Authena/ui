@@ -3,6 +3,7 @@
     <ul >
       <li>
         <router-link to="/paper" class="link" exact>Paper</router-link>
+        <router-link to="/touchripple" class="link" exact>Touch Ripple</router-link>
       </li>
     </ul>
   </nav>

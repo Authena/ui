@@ -43,7 +43,7 @@ html, body{
 #app{
   width: 100%;
   height: 100%;
-  overflow: scroll;
+  overflow: auto;
   display: flex;
 }
 .left{
@@ -52,6 +52,6 @@ html, body{
 }
 .right{
   flex: 1;
-  overflow: scroll;
+  overflow: auto;
 }
 </style>
