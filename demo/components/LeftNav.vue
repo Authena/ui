@@ -1,17 +1,22 @@
 <template lang="html">
   <nav class="nav paper-1">
     <ul >
-      <li>
+      <LeftNavLinkWrap>
         <router-link to="/paper" class="link" exact>Paper</router-link>
+      </LeftNavLinkWrap>
+      <LeftNavLinkWrap>
         <router-link to="/touchripple" class="link" exact>Touch Ripple</router-link>
-      </li>
+      </LeftNavLinkWrap>
     </ul>
   </nav>
 </template>
 
 <script>
+import LeftNavLinkWrap from './LeftNavLinkWrap'
+
 export default {
   name: 'LeftNav',
+  components: { LeftNavLinkWrap },
 }
 </script>
 

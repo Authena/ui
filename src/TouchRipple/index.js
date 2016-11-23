@@ -7,7 +7,7 @@ const containerStyle = {
   right: '0px',
   top: '0px',
   bottom: '0px',
-  pointerEvent: 'none',
+  pointerEvents: 'none',
 }
 
 export default function touchRipple(containerEl, targetEl, style) {
@@ -54,18 +54,38 @@ export default function touchRipple(containerEl, targetEl, style) {
       transition: `opacity 450ms ${easeOut}, transform 450ms ${easeOut}`,
     }
   }
+  let lastRemoveRipple
   function handleMouseDown(event) {
+    // 不是右键点击不做操作
+    if (event.button !== 0) {
+      return
+    }
     const rippleEl = document.createElement('div')
-    objectAssign(rippleEl.style, getRippleStyle(event), { transform: 'scale(0)', opacity: '0.3' })
+    objectAssign(rippleEl.style, getRippleStyle(event), { transform: 'scale(0)', opacity: '0.1' })
     containerEl.appendChild(rippleEl)
 
+    let times = 0
+    function removeRipple() {
+      if (times < 1) {
+        times += 1
+        return
+      }
+      rippleEl.addEventListener('transitionend', () => {
+        containerEl.removeChild(rippleEl)
+      })
+      objectAssign(rippleEl.style, getRippleStyle(event), { opacity: '0' })
+    }
+    lastRemoveRipple = removeRipple
     // enter active
     window.requestAnimationFrame(() => {
       objectAssign(rippleEl.style, { transform: 'scale(1)' })
     })
+    rippleEl.addEventListener('transitionend', () => {
+      removeRipple()
+    })
   }
   function handleMouseUp() {
-    // el.removeChild(rippleEl)
+    lastRemoveRipple()
   }
   targetEl.addEventListener('mousedown', handleMouseDown)
   targetEl.addEventListener('mouseup', handleMouseUp)
