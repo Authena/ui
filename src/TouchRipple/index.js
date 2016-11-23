@@ -10,8 +10,10 @@ const containerStyle = {
   pointerEvents: 'none',
 }
 
-export default function touchRipple(containerEl, targetEl, style) {
-  objectAssign(containerEl.style, containerStyle, style)
+export default function touchRipple(containerEl, targetEl, options = {}) {
+  let disable = options.disable
+  let center = options.center
+  objectAssign(containerEl.style, containerStyle)
   function getOffset() {
     const rect = containerEl.getBoundingClientRect()
     return {
@@ -25,19 +27,28 @@ export default function touchRipple(containerEl, targetEl, style) {
   function getRippleStyle(event) {
     const elHeight = containerEl.offsetHeight
     const elWidth = containerEl.offsetWidth
-    const isTouchEvent = event.touches && event.touches.length
-    const offset = getOffset()
-    const pageX = isTouchEvent ? event.touches[0].pageX : event.pageX
-    const pageY = isTouchEvent ? event.touches[0].pageY : event.pageY
-    const pointerX = pageX - offset.left
-    const pointerY = pageY - offset.top
-    const topLeftDiag = calcDiag(pointerX, pointerY)
-    const topRightDiag = calcDiag(elWidth - pointerX, pointerY)
-    const botRightDiag = calcDiag(elWidth - pointerX, elHeight - pointerY)
-    const botLeftDiag = calcDiag(pointerX, elHeight - pointerY)
-    const rippleRadius = Math.max(
-      topLeftDiag, topRightDiag, botRightDiag, botLeftDiag,
-    )
+    let rippleRadius
+    let pointerX
+    let pointerY
+    if (center) {
+      rippleRadius = calcDiag(elWidth / 2, elHeight / 2)
+      pointerX = elWidth / 2
+      pointerY = elHeight / 2
+    } else {
+      const isTouchEvent = event.touches && event.touches.length
+      const offset = getOffset()
+      const pageX = isTouchEvent ? event.touches[0].pageX : event.pageX
+      const pageY = isTouchEvent ? event.touches[0].pageY : event.pageY
+      pointerX = pageX - offset.left
+      pointerY = pageY - offset.top
+      const topLeftDiag = calcDiag(pointerX, pointerY)
+      const topRightDiag = calcDiag(elWidth - pointerX, pointerY)
+      const botRightDiag = calcDiag(elWidth - pointerX, elHeight - pointerY)
+      const botLeftDiag = calcDiag(pointerX, elHeight - pointerY)
+      rippleRadius = Math.max(
+        topLeftDiag, topRightDiag, botRightDiag, botLeftDiag,
+      )
+    }
     const rippleSize = `${rippleRadius * 2}px`
     const left = `${pointerX - rippleRadius}px`
     const top = `${pointerY - rippleRadius}px`
@@ -56,6 +67,9 @@ export default function touchRipple(containerEl, targetEl, style) {
   }
   let lastRemoveRipple
   function handleMouseDown(event) {
+    if (disable) {
+      return
+    }
     // 不是右键点击不做操作
     if (event.button !== 0) {
       return
@@ -85,8 +99,17 @@ export default function touchRipple(containerEl, targetEl, style) {
     })
   }
   function handleMouseUp() {
+    if (disable) {
+      return
+    }
     lastRemoveRipple()
   }
   targetEl.addEventListener('mousedown', handleMouseDown)
   targetEl.addEventListener('mouseup', handleMouseUp)
+
+  return {
+    disable() { disable = true },
+    enable() { disable = false },
+    setCenter(c) { center = !!c },
+  }
 }
